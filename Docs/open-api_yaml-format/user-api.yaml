@@ -1,0 +1,225 @@
+openapi: "3.0.3"
+info:
+  title: User API
+  description: User API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+paths:
+  /api/users:
+    post:
+      description: Register a new user
+      requestBody:
+        content:
+          application/json:
+            examples:
+              John doe register:
+                value:
+                  username: john doe
+                  password: password
+                  name: John Doe
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/Name'
+                - $ref: '#/components/schemas/UserAuth'
+      responses:
+        '201':
+          description: Success register user
+          content:
+            application/json:
+              examples:
+                John doe success register:
+                  $ref: '#/components/examples/UserValue'
+              schema:
+                $ref: '#/components/schemas/UserModel'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /api/users/login:
+    post:
+      requestBody:
+        description: Login user
+        content:
+          application/json:
+            examples:
+              John doe login:
+                value:
+                  username: john.doe
+                  password: password
+            schema:
+              $ref: '#/components/schemas/UserAuth'
+      responses:
+        '200':
+          description: Success login
+          content:
+            application/json:
+              examples:
+                John doe success login:
+                  value:
+                    user:
+                      id: 1
+                      username: john.doe
+                      name: John Doe
+                      token: eyJ0e
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/UserModel'
+                  - type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          token:
+                            type: string
+                        required:
+                          - token
+        '401':
+          description: User failed to login
+          content:
+            application/json:
+              examples:
+                Username error:
+                  value:
+                    error:
+                      message: Username incorrect
+                Password error:
+                  value:
+                    error:
+                      message: Password incorrect
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /api/users/current:
+    get:
+      description: Get current user
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+      responses:
+        '200':
+          description: Get John doe user
+          content:
+            application/json:
+              examples:
+                Success get current user:
+                  $ref: '#/components/examples/UserValue'
+              schema:
+                $ref: '#/components/schemas/UserModel'
+    patch:
+      description: Update current user
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            examples:
+              John doe update:
+                $ref: '#/components/examples/UserValue'
+            schema:
+              anyOf:
+                - $ref: '#/components/schemas/Name'
+                - $ref: '#/components/schemas/Username'
+                - $ref: '#/components/schemas/UserPassword'
+      responses:
+        '200':
+          description: Success update current user
+          content:
+            application/json:
+              examples:
+                John doe success update:
+                  $ref: '#/components/examples/UserValue'
+              schema:
+                $ref: '#/components/schemas/UserModel'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /api/users/logout:
+    post:
+      description: Logout user
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+      responses:
+        '200':
+          description: Success logout current user
+          content:
+            application/json:
+              schema:
+                type: boolean
+                properties:
+                  success:
+                    type: boolean
+components:
+  parameters:
+    Authorization:
+      name: Authorization
+      in: header
+  examples:
+    UserValue:
+      value:
+        id: 1
+        username: john doe
+        name: John Doe
+  schemas:
+    UserId:
+      type: object
+      properties:
+        id:
+          type: integer
+      required:
+        - id
+    Name:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+    Username:
+      type: object
+      properties:
+        username:
+          type: string
+      required:
+        - username
+    UserPassword:
+      type: object
+      properties:
+        password:
+          type: string
+      required:
+        - password
+    UserModel:
+      type: object
+      properties:
+        user:
+          allOf:
+            - $ref: '#/components/schemas/UserId'
+            - $ref: '#/components/schemas/Username'
+            - $ref: '#/components/schemas/Name'
+    UserAuth:
+      allOf:
+        - $ref: '#/components/schemas/Username'
+        - $ref: '#/components/schemas/UserPassword'
+    ErrorMessage:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+          required:
+            - message
+  responses:
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          examples:
+            Username Error:
+              value:
+                error:
+                  message: Username already taken
+            Password Error:
+              value:
+                error:
+                message: Password must be at least 8 characters long
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
