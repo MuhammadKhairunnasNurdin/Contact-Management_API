@@ -141,7 +141,7 @@ paths:
           content:
             application/json:
               schema:
-                type: boolean
+                type: object
                 properties:
                   success:
                     type: boolean

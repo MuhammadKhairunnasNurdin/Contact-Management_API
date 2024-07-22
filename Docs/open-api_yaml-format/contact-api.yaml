@@ -4,7 +4,7 @@ info:
   description: Contact API
   version: 1.0.0
 servers:
-  - url: http://localhost
+  - url: http://localhost:8000
 paths:
   /api/contact:
     get:
@@ -138,7 +138,7 @@ paths:
           content:
             application/json:
               schema:
-                type: boolean
+                type: object
                 properties:
                   success:
                     type: boolean
