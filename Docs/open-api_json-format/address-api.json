@@ -1,0 +1,317 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Address API",
+        "description": "Address API",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000"
+        }
+    ],
+    "paths": {
+        "/api/contact/{contactId}/addresses": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/Authorization"
+                },
+                {
+                    "$ref": "#/components/parameters/ContactPath"
+                }
+            ],
+            "get": {
+                "description": "Get list address of a contact",
+                "responses": {
+                    "200": {
+                        "description": "Success get list of addresses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "addresses": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/AddressModel"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DefaultError"
+                    }
+                }
+            },
+            "post": {
+                "description": "Create an address for a contact",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "create address": {
+                                    "$ref": "#/components/examples/AddressMainValue"
+                                }
+                            },
+                            "schema": {
+                                "$ref": "#/components/schemas/AddressMain"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success create an address",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "created address": {
+                                        "$ref": "#/components/examples/AddressModelValue"
+                                    }
+                                },
+                                "schema": {
+                                    "$ref": "#/components/schemas/AddressModel"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DefaultError"
+                    }
+                }
+            }
+        },
+        "/api/contact/{contactId}/addresses/{addressId}": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/Authorization"
+                },
+                {
+                    "$ref": "#/components/parameters/ContactPath"
+                },
+                {
+                    "$ref": "#/components/parameters/AddressPath"
+                }
+            ],
+            "get": {
+                "description": "Get an address of a contact",
+                "responses": {
+                    "200": {
+                        "description": "Success get an address",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "address": {
+                                        "$ref": "#/components/examples/AddressModelValue"
+                                    }
+                                },
+                                "schema": {
+                                    "$ref": "#/components/schemas/AddressModel"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DefaultError"
+                    }
+                }
+            },
+            "put": {
+                "description": "Update an address of a contact",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "update address": {
+                                    "$ref": "#/components/examples/AddressMainValue"
+                                }
+                            },
+                            "schema": {
+                                "$ref": "#/components/schemas/AddressMain"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success update an address",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "updated address": {
+                                        "$ref": "#/components/examples/AddressModelValue"
+                                    }
+                                },
+                                "schema": {
+                                    "$ref": "#/components/schemas/AddressModel"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DefaultError"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an address of a contact",
+                "responses": {
+                    "200": {
+                        "description": "Address successfully deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DefaultError"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "parameters": {
+            "Authorization": {
+                "name": "Authorization",
+                "in": "header",
+                "description": "Authorization token",
+                "required": true,
+                "example": "dXNlcjpwYXNzd29yZA=="
+            },
+            "ContactPath": {
+                "name": "contactId",
+                "in": "path",
+                "description": "ID of the contact",
+                "required": true,
+                "example": 1
+            },
+            "AddressPath": {
+                "name": "addressId",
+                "in": "path",
+                "description": "ID of the address",
+                "required": true,
+                "example": 1
+            }
+        },
+        "schemas": {
+            "AddressMain": {
+                "type": "object",
+                "properties": {
+                    "street": {
+                        "type": "string"
+                    },
+                    "city": {
+                        "type": "string"
+                    },
+                    "province": {
+                        "type": "string"
+                    },
+                    "country": {
+                        "type": "string"
+                    },
+                    "postalCode": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AddressId": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                    }
+                }
+            },
+            "AddressModel": {
+                "type": "object",
+                "properties": {
+                    "address": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AddressId"
+                            },
+                            {
+                                "$ref": "#/components/schemas/AddressMain"
+                            }
+                        ]
+                    }
+                }
+            },
+            "Error": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "object",
+                        "properties": {
+                            "message": {
+                                "type": "string"
+                            },
+                            "data": {
+                                "type": "object",
+                                "description": "Additional error data"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "examples": {
+            "AddressMainValue": {
+                "value": {
+                    "street": "123 Main St",
+                    "city": "Toronto",
+                    "province": "Ontario",
+                    "country": "Canada",
+                    "postalCode": "M1M 1M1"
+                }
+            },
+            "AddressModelValue": {
+                "value": {
+                    "address": {
+                        "id": 1,
+                        "street": "123 Main St",
+                        "city": "Toronto",
+                        "province": "Ontario",
+                        "country": "Canada",
+                        "postalCode": "M1M 1M1"
+                    }
+                }
+            }
+        },
+        "responses": {
+            "DefaultError": {
+                "description": "Unexpected error",
+                "content": {
+                    "application/json": {
+                        "example": {
+                            "error": {
+                                "message": "Unexpected error occurred",
+                                "data": {
+                                    "data": "this is an example"
+                                }
+                            }
+                        },
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
