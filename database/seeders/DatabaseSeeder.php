@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Address;
+use App\Models\Contact;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -13,11 +15,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        User::factory()
+            ->count(100)
+            ->create()
+            ->each(function (User $user) {
+                $user->contacts()->saveMany(
+                    Contact::factory()
+                        ->count(4)
+                        ->make()
+                )->each(function (Contact $contact) {
+                    $contact->addresses()->saveMany(
+                        Address::factory()
+                            ->count(4)
+                            ->make()
+                    );
+                });
+        });
     }
 }
